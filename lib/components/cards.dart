@@ -28,7 +28,8 @@ class NoteCardComponent extends StatelessWidget {
     final Size size = MediaQuery.of(context).size;
     double ht = size.height;
     double wt = size.width;
-    String neatDate = DateFormat.yMd().add_jm().format(noteData.date);
+    String neatDate =
+        noteData.date; // DateFormat.yMd().add_jm().format(noteData.date.t);
     Color color = Colors
         .red; //colorList.elementAt(noteData.title.length % colorList.length);
     return Container(

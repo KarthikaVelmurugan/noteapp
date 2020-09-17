@@ -10,6 +10,8 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/painting.dart' as prefix0;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:noteapp/data.dart';
+
 import 'package:noteapp/data/models.dart';
 import 'package:noteapp/screens/view.dart';
 import 'package:noteapp/services/database.dart';
@@ -19,6 +21,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class EditNotePage extends StatefulWidget {
   Function() triggerRefetch;
   NotesModel existingNote;
+
   EditNotePage({Key key, Function() triggerRefetch, NotesModel existingNote})
       : super(key: key) {
     this.triggerRefetch = triggerRefetch;
@@ -35,20 +38,32 @@ class _EditNotePageState extends State<EditNotePage> {
   FocusNode titleFocus = FocusNode();
   FocusNode contentFocus = FocusNode();
 
+  NotesData n = new NotesData();
   NotesModel currentNote;
+  var snotetitle = '', snotedesc = '';
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-
+    setState(() {
+      isNoteNew ? snotetitle = widget.existingNote.title : '';
+      isNoteNew ? snotedesc = widget.existingNote.content : '';
+      //  snote = widget.existingNote;
+      // print("Edit page............." + snote.title + snote.content);
+    });
     if (widget.existingNote == null) {
       currentNote = NotesModel(
-          content: '', title: '', date: DateTime.now(), isImportant: false);
+          content: '',
+          title: '',
+          date: DateTime.now().toString(),
+          isImportant: false);
       isNoteNew = true;
     } else {
       currentNote = widget.existingNote;
+      print("currentnot.........." + currentNote.title + currentNote.content);
+      // snote = widget.existingNote;
       isNoteNew = false;
     }
     titleController.text = currentNote.title;
@@ -175,7 +190,7 @@ class _EditNotePageState extends State<EditNotePage> {
                             ),
                             onPressed: () {
                               handleSave();
-                              storeFirebase();
+                              //storeFirebase();
                             }),
                       )
                     ],
@@ -188,7 +203,7 @@ class _EditNotePageState extends State<EditNotePage> {
   }
 
   storeFirebase() async {
-    var firebaseUser = await FirebaseAuth.instance.currentUser();
+    //var firebaseUser = await FirebaseAuth.instance.currentUser();
     SharedPreferences prefsnote = await SharedPreferences.getInstance();
     setState(() {
       name = prefsnote.getString('sname');
@@ -196,37 +211,48 @@ class _EditNotePageState extends State<EditNotePage> {
       currentNote.title = titleController.text;
       currentNote.content = contentController.text;
     });
-    if (isNoteNew) {
-      Firestore.instance.collection(name).document(firebaseUser.uid).setData({
-        'title': currentNote.title,
-        'description': currentNote.content,
-        'time': DateTime.now().toString()
-      }).then((_) => {print("sucess")});
-    } else {
+    //   if (isNoteNew) {
+    print(DateTime.now().toLocal());
+    Firestore.instance
+        .collection(name)
+        .document("notes")
+        .collection(DateTime.now().toLocal().toString())
+        .document(currentNote.title)
+        .setData({
+      "title": currentNote.title,
+      "description": currentNote.content,
+      "time": DateTime.now().toString()
+    }).then((_) => {print("sucess")});
+    /* } else {
       Firestore.instance
           .collection(name)
-          .document(firebaseUser.uid)
+          .document()
           .updateData({
         'title': currentNote.title,
         'description': currentNote.content,
         'time': DateTime.now().toString()
       }).then((_) => {print("updated")});
-    }
+    }*/
   }
 
   void handleSave() async {
     setState(() {
+      //   print("before....................." + snote.title + snote.content);
+      // snote = currentNote;
+
       currentNote.title = titleController.text;
       currentNote.content = contentController.text;
+
+      // print("before....................." + snote.title + snote.content);
       print('Hey there ${currentNote.content}');
     });
     if (isNoteNew) {
-      var latestNote = await NotesDatabaseService.db.addNoteInDB(currentNote);
+      var latestNote = await n.addNoteInDB(currentNote);
       setState(() {
         currentNote = latestNote;
       });
     } else {
-      await NotesDatabaseService.db.updateNoteInDB(currentNote);
+      await n.updateNoteInDB(currentNote, snotetitle, snotedesc);
     }
     setState(() {
       isNoteNew = false;
@@ -276,7 +302,7 @@ class _EditNotePageState extends State<EditNotePage> {
                           fontWeight: FontWeight.w500,
                           letterSpacing: 1)),
                   onPressed: () async {
-                    await NotesDatabaseService.db.deleteNoteInDB(currentNote);
+                    await n.deleteNoteInDB(currentNote);
                     widget.triggerRefetch();
                     Navigator.pop(context);
                     Navigator.pop(context);

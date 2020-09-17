@@ -7,6 +7,7 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
+import 'package:noteapp/data.dart';
 import 'package:noteapp/data/models.dart';
 import 'package:noteapp/remainder.dart';
 import 'package:noteapp/screens/edit.dart';
@@ -28,6 +29,7 @@ class ViewNotePage extends StatefulWidget {
 
 class _ViewNotePageState extends State<ViewNotePage> {
   DateTime pickedDate;
+  DateTime initialDate;
   TimeOfDay time;
   TimeOfDay time1;
   bool _showcard = false;
@@ -36,12 +38,19 @@ class _ViewNotePageState extends State<ViewNotePage> {
   AndroidInitializationSettings androidInitializationSettings;
   IOSInitializationSettings iosInitializationSettings;
   InitializationSettings initializationSettings;
+  NotesData n = new NotesData();
+  NotesModel snote;
   bool _iconnoti = false;
   @override
   void initState() {
     super.initState();
+    setState(() {
+      snote = widget.currentNote;
+    });
     showHeader();
+    print("oooooooo" + snote.title + snote.content);
     pickedDate = DateTime.now();
+    initialDate = pickedDate;
     time = TimeOfDay.now();
     time1 = time;
     initializing();
@@ -64,12 +73,30 @@ class _ViewNotePageState extends State<ViewNotePage> {
   Future<void> notificationAfterSec() async {
     //var timeDelayed = pickedDate.add(Duration(hours: time.hour));
     print("time" + time.toString());
-    print(time.hourOfPeriod);
+
+    final difference = pickedDate.difference(initialDate).inDays;
+    final diffhr = pickedDate.difference(initialDate).inHours;
+    final diffmin = pickedDate.difference(initialDate).inMinutes;
+    print("no of days:" + difference.toString());
+    difference > 0
+        ? print("no of days:" +
+            difference.toString() +
+            "hours" +
+            diffhr.toString() +
+            "minutes" +
+            diffmin.toString())
+        : print("hours");
+    //print(time.hourOfPeriod);
     print(time.hour - time1.hour);
 
     print(time.minute - time1.minute);
-    var timeDelayed = pickedDate.add(Duration(
-        hours: time.hour - time1.hour, minutes: time.minute - time1.minute));
+
+    var timeDelayed = difference > 0
+        ? pickedDate
+            .add(Duration(days: difference, hours: diffhr, minutes: diffmin))
+        : pickedDate.add(Duration(
+            hours: time.hour - time1.hour,
+            minutes: time.minute - time1.minute));
     AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
             'second channel ID', 'second Channel title', 'second channel body',
@@ -208,7 +235,8 @@ class _ViewNotePageState extends State<ViewNotePage> {
               child: Padding(
                 padding: const EdgeInsets.only(left: 24),
                 child: Text(
-                  DateFormat.yMd().add_jm().format(widget.currentNote.date),
+                  widget.currentNote.date,
+                  // DateFormat.yMd().add_jm().format(widget.currentNote.date),
                   style: TextStyle(
                       fontWeight: FontWeight.w500, color: Colors.grey.shade500),
                 ),
@@ -307,7 +335,7 @@ class _ViewNotePageState extends State<ViewNotePage> {
   }
 
   void handleSave() async {
-    await NotesDatabaseService.db.updateNoteInDB(widget.currentNote);
+    await n.updateNoteInDB(widget.currentNote, "", "");
     widget.triggerRefetch();
   }
 
@@ -331,7 +359,7 @@ class _ViewNotePageState extends State<ViewNotePage> {
 
   void handleShare() {
     Share.share(
-        '${widget.currentNote.title.trim()}\n(On: ${widget.currentNote.date.toIso8601String().substring(0, 10)})\n\n${widget.currentNote.content}');
+        '${widget.currentNote.title.trim()}\n(On: ${widget.currentNote.date.substring(0, 10)})\n\n${widget.currentNote.content}');
   }
 
   void handleBack() {
@@ -355,8 +383,7 @@ class _ViewNotePageState extends State<ViewNotePage> {
                         fontWeight: FontWeight.w500,
                         letterSpacing: 1)),
                 onPressed: () async {
-                  await NotesDatabaseService.db
-                      .deleteNoteInDB(widget.currentNote);
+                  await n.deleteNoteInDB(widget.currentNote);
                   widget.triggerRefetch();
                   Navigator.pop(context);
                   Navigator.pop(context);

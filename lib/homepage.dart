@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:noteapp/components/cards.dart';
 import 'package:noteapp/components/faderoute.dart';
+import 'package:noteapp/data.dart';
 import 'package:noteapp/data/models.dart';
 import 'package:noteapp/screens/edit.dart';
 import 'package:noteapp/screens/view.dart';
@@ -16,21 +17,22 @@ class _HomePage extends State<HomePage> {
   @override
   bool isFlagOn = false;
   bool headerShouldHide = false;
+  //NotesModel note;
   List<NotesModel> notesList = [];
   TextEditingController searchController = TextEditingController();
-
+  NotesData n = new NotesData();
   bool isSearchEmpty = true;
 
   @override
   void initState() {
     super.initState();
-    NotesDatabaseService.db.init();
+    //  NotesDatabaseService.db.init();
     setNotesFromDB();
   }
 
   setNotesFromDB() async {
     print("Entered setNotes");
-    var fetchedNotes = await NotesDatabaseService.db.getNotesFromDB();
+    var fetchedNotes = await n.getNotesFromDB();
     setState(() {
       notesList = fetchedNotes;
     });
@@ -290,8 +292,9 @@ class _HomePage extends State<HomePage> {
     Navigator.push(
         context,
         CupertinoPageRoute(
-            builder: (context) =>
-                EditNotePage(triggerRefetch: refetchNotesFromDB)));
+            builder: (context) => EditNotePage(
+                  triggerRefetch: refetchNotesFromDB,
+                )));
   }
 
   void refetchNotesFromDB() async {

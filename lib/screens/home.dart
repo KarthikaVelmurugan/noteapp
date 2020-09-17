@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:noteapp/components/faderoute.dart';
+import 'package:noteapp/data.dart';
 import 'package:noteapp/data/models.dart';
 import 'package:noteapp/screens/edit.dart';
 import 'package:noteapp/screens/view.dart';
@@ -26,23 +27,25 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  NotesModel note;
   bool isFlagOn = false;
   bool headerShouldHide = false;
   List<NotesModel> notesList = [];
   TextEditingController searchController = TextEditingController();
-
+  NotesData n = new NotesData();
   bool isSearchEmpty = true;
 
   @override
   void initState() {
     super.initState();
-    NotesDatabaseService.db.init();
+    //   NotesDatabaseService.db.init();
+
     setNotesFromDB();
   }
 
   setNotesFromDB() async {
     print("Entered setNotes");
-    var fetchedNotes = await NotesDatabaseService.db.getNotesFromDB();
+    var fetchedNotes = await n.getNotesFromDB();
     setState(() {
       notesList = fetchedNotes;
     });
@@ -293,8 +296,10 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.push(
         context,
         CupertinoPageRoute(
-            builder: (context) =>
-                EditNotePage(triggerRefetch: refetchNotesFromDB)));
+            builder: (context) => EditNotePage(
+                  triggerRefetch: refetchNotesFromDB,
+                  existingNote: note,
+                )));
   }
 
   void refetchNotesFromDB() async {

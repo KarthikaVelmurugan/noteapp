@@ -1,19 +1,28 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class NotesModel {
-  int id;
+  var id;
   String title;
   String content;
   bool isImportant;
-  DateTime date;
+  String date;
 
   NotesModel({this.id, this.title, this.content, this.isImportant, this.date});
 
   NotesModel.fromMap(Map<String, dynamic> map) {
-    this.id = map['_id'];
-    this.title = map['title'];
+    // print("ans" + map.toString());
+    // print(map['date']);
+    // print(map['isImportant']);
+    // print(map['id']);
+    //print(map[title]);
+    this.id = map['id'];
+    this.title = map['title'].toString();
     this.content = map['content'];
-    this.date = DateTime.parse(map['date']);
+
+    this.date = DateTime.now().toString(); //ap['date'];
+    //DateTime.now(); //DateTime.parse(map['date']);
     this.isImportant = map['isImportant'] == 1 ? true : false;
   }
 
@@ -23,7 +32,7 @@ class NotesModel {
       'title': this.title,
       'content': this.content,
       'isImportant': this.isImportant == true ? 1 : 0,
-      'date': this.date.toIso8601String()
+      'date': this.date //.toIso8601String(),
     };
   }
 
@@ -32,6 +41,6 @@ class NotesModel {
     this.title = 'Lorem Ipsum ' * (Random().nextInt(4) + 1);
     this.content = 'Lorem Ipsum ' * (Random().nextInt(4) + 1);
     this.isImportant = Random().nextBool();
-    this.date = DateTime.now().add(Duration(hours: Random().nextInt(100)));
+    // this.date = DateTime.now().add(Duration(hours: Random().nextInt(100)));
   }
 }

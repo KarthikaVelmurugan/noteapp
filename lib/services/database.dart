@@ -2,7 +2,7 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import '../data/models.dart';
 
-class NotesDatabaseService {
+/*class NotesDatabaseService {
   String path;
 
   NotesDatabaseService._();
@@ -68,4 +68,4 @@ class NotesDatabaseService {
     print('Note added: ${newNote.title} ${newNote.content}');
     return newNote;
   }
-}
+}*/

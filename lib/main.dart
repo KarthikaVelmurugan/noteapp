@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:noteapp/homepage.dart';
 import 'package:noteapp/remainder.dart';
+import 'package:noteapp/thirumalai.dart';
 import 'package:noteapp/userpage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'theme.dart' as Theme;
