@@ -1,16 +1,24 @@
-# noteapp
+# notes Taking App
 
-A new Flutter project.
+ Keep Your daily notes as useful way ....with notification manager.
+ 
+ # Splash Screen
+ 
+ 
+ ![Screenshot_20201116-141549](https://user-images.githubusercontent.com/64409033/99231555-c7b74380-2816-11eb-8e0e-897141065bc9.jpg)
+ 
+ 
+ #  My Notes
+ 
 
-## Getting Started
+![Screenshot_20201116-141554](https://user-images.githubusercontent.com/64409033/99231591-d3a30580-2816-11eb-84ea-79375298bbd8.jpg)
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+# Editing Notes 
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![Screenshot_20201116-141607](https://user-images.githubusercontent.com/64409033/99231593-d4d43280-2816-11eb-8d9d-6aa827cc1e7f.jpg)
+
+# View Notes
+
+![Screenshot_20201116-141617](https://user-images.githubusercontent.com/64409033/99231601-d69df600-2816-11eb-8180-ce6feb45e1b5.jpg)
